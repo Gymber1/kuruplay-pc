@@ -1,50 +1,62 @@
+<div align="center">
+
+<img src="docs/icono.png" width="112" alt="KuruPlay">
+
 # KuruPlay PC
 
-Programa de Windows para quienes apoyan KuruPlay: interfaz propia, reproductor sin anuncios, descargas para ver sin internet, exportar a MP4 y avisos de episodios nuevos.
+**El programa de Windows de [KuruPlay](https://kuruplay.online) para quienes apoyan el proyecto.**
+Anime y manga en una app propia, sin anuncios, con descargas para ver sin internet.
 
-Esta carpeta está fuera de git (`.gitignore`) y fuera del zip de Hostinger.
+[![Última versión](https://img.shields.io/github/v/release/Gymber1/kuruplay-pc?label=versi%C3%B3n&color=e11d2e&style=for-the-badge)](https://github.com/Gymber1/kuruplay-pc/releases/latest)
+[![Descargas](https://img.shields.io/github/downloads/Gymber1/kuruplay-pc/total?label=descargas&color=f8d88f&style=for-the-badge)](https://github.com/Gymber1/kuruplay-pc/releases)
+![Windows 10 y 11](https://img.shields.io/badge/Windows-10%20%7C%2011-2b2b33?style=for-the-badge&logo=windows)
 
-## Cómo funciona
+### [⬇ Descargar la última versión](https://github.com/Gymber1/kuruplay-pc/releases/latest)
 
-- **Acceso:** solo cuentas con «KuruPlay PC» activo (Panel → Usuarios → ficha → *KuruPlay PC*: 1 mes, 3 meses, 1 año o permanente) y los administradores.
-- **Iniciar sesión:** el programa pide un código a `/api/app/conexion` y abre el navegador en `/app/conectar/{código}`. Allí se entra con Google, Discord, Steam o Twitch y se pulsa «Conectar este equipo». El programa recibe una llave propia, que se guarda cifrada con DPAPI en `%APPDATA%\KuruPlay\sesion.dat`. Cada cuenta admite 3 equipos, que se desconectan desde el perfil o desde el panel.
-- **API:** `routes/app.php` → `AppPcController` (inicio, catálogo, ficha, episodio, lista, progreso y ajustes). La lista y el progreso son los mismos de la web.
-- **Descargas:** solo de los servidores HLS (Servidor 1-3). Los trozos `.ts` se guardan en `%APPDATA%\KuruPlay\descargas\<serie>-e<n>-<audio>\` junto a una `index.m3u8` local. Se reproducen con `kuru://descargas/…`. Si los enlaces firmados caducan, se piden nuevos a la API. **Exportar** los une con ffmpeg, sin recodificar, en `Descargas\<Título> - Episodio N.mp4`.
-- **Sin conexión:** se puede entrar hasta 7 días desde la última comprobación y ver lo descargado.
-- **Manga:** botón Anime / Manga en el lateral. `AppMangaController` (`/api/app/manga/inicio`, `catalogo`, `obra/{id}`, `capitulo/{id}`) usa la misma API de manga que la web. Lector en cascada o por páginas, calidad alta o ligera, ancho S/M/L y teclado (← →, N/P, Esc). Si una página no carga del nodo de MangaDex se pide por `/manga/pagina` de la web. Lo leído, el historial y «Mi lista» de manga se guardan en este equipo (localStorage). Los capítulos de editorial (MangaPlus…) se abren en el navegador.
-- **Descubrir:** carga sola la página siguiente al acercarse al final (anime y manga). Filtros como la web: letra, tipo, géneros, año, estado y orden (`/api/app/catalogo`).
-- **Horario:** `/api/app/horario`, los siete días con hora (12 h) y siguiente episodio.
-- **Actualizaciones:** desde GitHub Releases del repositorio público `kuruplay.repoActualizaciones` de package.json (solo instaladores, sin código). Al abrir, si hay versión nueva sale una ventana para actualizar; también en Ajustes. Descarga con progreso, comprueba tamaño y SHA-256 y ejecuta el instalador en silencio, que vuelve a abrir el programa. Publicar: subir `version` en package.json, escribir `NOVEDADES.md`, `npm run instalador` y `npm run publicar` (con `$env:GITHUB_TOKEN`), o crear la release a mano en GitHub con la etiqueta `v<versión>` y el `.exe`.
-- **Caché (`src/main/cache.js`):** las portadas se piden como `kuru://img/?u=<url>`; la primera vez se guardan en `%APPDATA%\KuruPlay\almacen\imagenes` (tope de 400 MB, se borran las más antiguas) y después salen del disco. Las consultas GET de `apiCache(ruta, segundos)` se guardan en `almacen\datos` y no se repiten hasta caducar, aunque se cierre el programa; sin internet se sirve la última copia. Las de más de 7 días se borran. La caché de Chromium (vídeo ya reproducido) tiene tope de 500 MB. Ojo: la carpeta no puede llamarse `cache`, porque en Windows choca con la `Cache` de Chromium y se vacía al arrancar. En Ajustes → Almacenamiento se ve cuánto ocupa cada cosa y se libera.
-- **Avisos:** cada 15 minutos mira los últimos episodios; si uno es de una serie de Mi lista, lanza una notificación de Windows.
+</div>
 
-## Probar
+---
 
-```powershell
-npm install
-npm run local      # contra https://kuruplay.org (Laragon encendido y migración aplicada)
-npm start          # contra https://kuruplay.online
-```
+## Qué trae
 
-En la web local, dale acceso a tu cuenta desde el panel (los administradores ya lo tienen).
+| | |
+|---|---|
+| 🎬 **Reproductor propio** | Sin anuncios, con salto de intro y final, siguiente episodio automático y calidad a tu gusto. |
+| ⬇️ **Descargas** | Guarda episodios para verlos sin internet y expórtalos a MP4. |
+| 📚 **Manga** | Catálogo, fichas y lector en cascada o por páginas. |
+| 🗓️ **Horario** | Los estrenos de cada día de la semana con su hora. |
+| 🔎 **Descubrir** | Los mismos filtros que la web: letra, tipo, géneros, año, estado y orden. |
+| 🔔 **Avisos** | Una notificación de Windows cuando sale un episodio de un anime de tu lista. |
+| ⚡ **Rápido** | Las portadas y las páginas ya vistas se guardan en tu equipo. |
+| 🔄 **Se actualiza solo** | Al abrir te avisa de la versión nueva y se instala con un clic. |
 
-Si Electron se instala sin `electron.exe` (Node 26 no lo descomprime), descomprime a mano el zip de `%LOCALAPPDATA%\electron\Cache` en `node_modules\electron\dist` y escribe `electron.exe` en `node_modules\electron\path.txt`.
+Tu lista, tu progreso y tus preferencias son los mismos que en la web.
 
-Variables solo para pruebas:
-- `KURUPLAY_DATOS=<carpeta>` guarda los datos y las exportaciones en otra carpeta.
-- `KURUPLAY_SIN_NAVEGADOR=1` evita que se abra el navegador al iniciar sesión.
+## Cómo instalarlo
 
-## Compilar el instalador
+1. Descarga **`KuruPlay-Setup-x.y.z-x64.exe`** de la [última versión](https://github.com/Gymber1/kuruplay-pc/releases/latest).
+2. Ábrelo y sigue los pasos. No pide permisos de administrador.
+3. Pulsa **Iniciar sesión**: se abre tu navegador, entras con tu cuenta de KuruPlay (Google, Discord, Steam o Twitch) y apruebas el equipo.
 
-```powershell
-npm run instalador
-```
+> Si Windows muestra «Windows protegió su PC», pulsa **Más información → Ejecutar de todas formas**. Sale porque el instalador no tiene firma de pago, no porque tenga nada raro.
 
-1. `scripts/empaquetar.mjs` monta `dist/KuruPlay/`: el Electron renombrado a `KuruPlay.exe`, con el icono y los datos puestos con rcedit, solo los archivos necesarios y solo los idiomas español e inglés.
-2. `scripts/instalador.iss` usa Inno Setup 6 para generar `dist/KuruPlay-Setup-<versión>-x64.exe`. El instalador sale en español (permite elegir idioma), se instala por usuario en `%LOCALAPPDATA%\Programs\KuruPlay` sin pedir permisos de administrador, crea el acceso directo en el escritorio y ofrece «Abrir KuruPlay» al terminar. Al desinstalar pregunta si borrar también las descargas.
+Si tienes la 1.0.0 o la 1.1.0, instala la última a mano una vez. A partir de la 1.2.0 las actualizaciones llegan solas.
 
-## Publicar una versión nueva
+## Requisitos
 
-1. Sube `version` en `package.json`, escribe `NOVEDADES.md` y ejecuta `npm run instalador`.
-2. Publica la release en GitHub (`Gymber1/kuruplay-pc`): `npm run publicar` con `$env:GITHUB_TOKEN`, o a mano con la etiqueta `v<versión>`, las notas de `NOVEDADES.md` y el `.exe`. Que quede marcada como **Latest**: es la que leen los programas instalados.
-3. Para avisar a quien siga en la 1.0.0 o la 1.1.0 (comprobaban `/api/app/version` de la web), en el `.env` del servidor pon `KURUPLAY_PC_VERSION=<versión>` y `KURUPLAY_PC_URL=https://github.com/Gymber1/kuruplay-pc/releases/latest`, y ejecuta `php artisan config:cache`.
+- Windows 10 u 11 de 64 bits.
+- Una cuenta de KuruPlay con **KuruPlay PC** activo. Se consigue [apoyando el proyecto](https://kuruplay.online/apoyar).
+
+## Preguntas
+
+**¿Es gratis?** El programa es un agradecimiento para quienes apoyan KuruPlay. La web sigue siendo gratis para todos.
+
+**¿En cuántos equipos puedo usarlo?** En 3 a la vez. Puedes desconectar cualquiera desde tu perfil en la web.
+
+**¿Dónde se guardan las descargas?** En `%APPDATA%\KuruPlay`. En **Ajustes → Almacenamiento** ves cuánto ocupa cada cosa y puedes liberarlo.
+
+**¿Algo no funciona?** Escríbenos en el Discord de KuruPlay o abre un [issue](https://github.com/Gymber1/kuruplay-pc/issues).
+
+---
+
+<div align="center"><sub>Este repositorio solo publica los instaladores. © KuruPlay</sub></div>
